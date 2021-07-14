@@ -1,0 +1,49 @@
+import React, {Component} from 'react';
+import CardList from '../components/CardList.js';
+import SearchBox from '../components/SearchBox';
+import Scroll from '../components/Scroll'
+
+import './App.css'
+
+
+class App extends Component {
+    constructor(){
+        super();
+        //как моделька имеет два свойства, это список роботов(в CardList) и поле для поиска (SearchBox)
+        this.state = {
+            robots:[],
+            searchfield:''
+        }
+    }
+
+    componentDidMount(){
+        fetch('https://jsonplaceholder.typicode.com/users') //отправить url где есть arrays with objects
+            .then(reponse => reponse.json()) //полученный ответ конвертируй в json
+            .then(users => this.setState({robots:users})); //users определить в параметр robots
+    }
+        
+    //this.setState - modify state
+    onSearchEvent = (event) =>{
+        this.setState({searchfield: event.target.value})
+        
+   
+    }
+    render() {
+        //фильтр по тому что человек вводит в поле поиск, в маленькими буквами это включает то, что написано в searchfield
+        const filteredRobots = this.state.robots.filter(robot =>{
+            return robot.name.toLowerCase().includes(this.state.searchfield.toLowerCase())
+        })
+        return(
+            <div className='tc'>
+                <h1 className='f1'>RoboFriends</h1>
+                <SearchBox searchChange={this.onSearchEvent}/>
+                <Scroll>
+                    <CardList robots={filteredRobots}/>
+                </Scroll>
+                
+            </div>
+        )
+    }
+}
+
+export default App;
